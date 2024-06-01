@@ -1,8 +1,42 @@
+import { http } from 'viem'
+import { mainnet } from 'viem/chains'
+import { createEnsPublicClient } from '@ensdomains/ensjs'
+// import { fileTypeFromBuffer } from '@sgtpooki/file-type'
+import { trustlessGateway } from '@helia/block-brokers'
+import { createHeliaHTTP } from '@helia/http'
+import { delegatedHTTPRouting, httpGatewayRouting } from '@helia/routers'
+import { createVerifiedFetch } from '@helia/verified-fetch'
+
+const ipfsProtostring = 'ipfs://'
+
+async function startup () {
+  window.ens = createEnsPublicClient({
+    chain: mainnet,
+    transport: http(),
+  })
+
+  window.vf = await createVerifiedFetch(
+    await createHeliaHTTP({
+      blockBrokers: [
+        trustlessGateway()
+      ],
+      routers: [
+        delegatedHTTPRouting('http://delegated-ipfs.dev'),
+        httpGatewayRouting({
+          gateways: ['https://trustless-gateway.link']
+        })
+      ]
+    })
+  )
+}
+startup()
+
 const browser = typeof chrome === 'undefined'
-  ? global.browser
+  ? window.browser
   : chrome
 
-console.log('here')
+const ens_cache = new Map()
+
 /**
  * intercept webRequests to .eth and forward them to limo-hijacker
  */
@@ -15,25 +49,51 @@ console.log('here')
 //   types: ['main_frame'],
 // });
 
+
+async function resolveContent (ethlimoDomainPath) {
+  ethlimoDomainPath = new URL(ethlimoDomainPath)
+  console.log(ethlimoDomainPath)
+  const ethDomainPath = ethlimoDomainPath.hostname.slice(0, -'.limo'.length)
+  let { protocolType, decoded } = ens_cache.get(ethlimoDomainPath) ?? await ens.getContentHashRecord({ name: ethDomainPath })
+
+  if (protocolType === 'ipns') {
+    return new Response('no ipns support yet')
+  }
+
+  const fullContentPath = ipfsProtostring + decoded.toString() + ethlimoDomainPath.pathname + '/' + ethlimoDomainPath.search
+
+  console.log(fullContentPath)
+
+  return vf(fullContentPath)
+}
+
 /**
  * intercept webRequests to .eth.limo and forward them to limo-hijacker
  */
 function listener(details) {
-  console.log('called')
+  console.log(details.url)
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let encoder = new TextEncoder();
 
+  const verifiedResponse = resolveContent(details.url)
+
   filter.onstart = event => {
-    console.log(event)
-    filter.write(encoder.encode('helllo'));
-    filter.close();
+    verifiedResponse.then(async (response) => {
+      filter.write(await response.arrayBuffer())
+      filter.close()
+    })
   }
 
-  return { cancel: undefined };
+  // throw away response from eth.limo
+  filter.ondata = () => {}
+
+  return { canceled: false };
 }
 browser.webRequest.onBeforeRequest.addListener(
   listener,
-  {urls: ["*://*.eth.limo/*"], types: ["main_frame"]},
+  {urls: ["*://*.eth.limo/*"],
+    types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "xmlhttprequest", "media", "websocket", "other"]
+},
   ["blocking"]
 );
 
