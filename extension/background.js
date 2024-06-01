@@ -3,29 +3,57 @@ const browser = typeof chrome === 'undefined'
   : chrome
 
 console.log('here')
-browser.webRequest.onErrorOccurred.addListener((details) => {
-  console.log('here')
-  const resolverUrl = browser.runtime.getURL('resolver.html')
-  browser.tabs.update(details.tabId, { url: resolverUrl.toString() + '?' + new URL(details.url).host });
-}, {
-  urls: ['*://*.eth/*'],
-  types: ['main_frame'],
-});
+/**
+ * intercept webRequests to .eth and forward them to limo-hijacker
+ */
+// browser.webRequest.onErrorOccurred.addListener((details) => {
+//   console.log('here')
+//   const resolverUrl = browser.runtime.getURL('resolver.html')
+//   browser.tabs.update(details.tabId, { url: resolverUrl.toString() + '?' + new URL(details.url).host });
+// }, {
+//   urls: ['*://*.eth/*'],
+//   types: ['main_frame'],
+// });
 
-browser.webRequest.onHeadersReceived.addListener(
-  function(details) {
-    for (let header of details.responseHeaders) {
-      if (header.name.toLowerCase() === "content-security-policy") {
-        header.value = header.value.replace(/frame-ancestors [^;]+/, `frame-ancestors 'self' ${browser.runtime.getURL('')}`);
-      }
-    }
-    return { responseHeaders: details.responseHeaders };
-  },
-  { urls: ["*://*.eth.limo/*"],
-    types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "xmlhttprequest", "media", "websocket", "other"]
-   },
-  ["blocking", "responseHeaders"]
+/**
+ * intercept webRequests to .eth.limo and forward them to limo-hijacker
+ */
+function listener(details) {
+  console.log('called')
+  let filter = browser.webRequest.filterResponseData(details.requestId);
+  let encoder = new TextEncoder();
+
+  filter.onstart = event => {
+    console.log(event)
+    filter.write(encoder.encode('helllo'));
+    filter.close();
+  }
+
+  return { cancel: undefined };
+}
+browser.webRequest.onBeforeRequest.addListener(
+  listener,
+  {urls: ["*://*.eth.limo/*"], types: ["main_frame"]},
+  ["blocking"]
 );
+
+/**
+ * Edit headers recieved from eth.limo to allow for it to be framed in browser
+ */
+// browser.webRequest.onHeadersReceived.addListener(
+//   function(details) {
+//     for (let header of details.responseHeaders) {
+//       if (header.name.toLowerCase() === "content-security-policy") {
+//         header.value = header.value.replace(/frame-ancestors [^;]+/, `frame-ancestors 'self' ${browser.runtime.getURL('')}`);
+//       }
+//     }
+//     return { responseHeaders: details.responseHeaders };
+//   },
+//   { urls: ["*://*.eth.limo/*"],
+//     types: ["main_frame", "sub_frame", "stylesheet", "script", "image", "xmlhttprequest", "media", "websocket", "other"]
+//    },
+//   ["blocking", "responseHeaders"]
+// );
 
 // browser.webRequest.onBeforeRequest.addListener(
 //   function(details) {
