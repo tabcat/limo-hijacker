@@ -1,0 +1,20 @@
+{
+  "manifest_version": 2,
+  "name": "http-response-filter",
+  "version": "1.0",
+  "permissions": [
+    "webRequest",
+    "webRequestBlocking",
+    "<all_urls>",
+    "*://*.eth.limo/*"
+  ],
+  "background": {
+    "scripts": ["background.js"],
+    "persistent": true
+  },
+  "web_accessible_resources": [
+    "resolver.html",
+    "registerServiceWorker.js",
+    "limo-hijacker.js"
+  ]
+}
