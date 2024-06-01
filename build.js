@@ -1,9 +1,9 @@
 import esbuild from 'esbuild'
 
 esbuild.build({
-  entryPoints: ['src/background.js'],
+  entryPoints: ['limo-hijacker.js'],
   bundle: true,
-  outfile: 'extension/background.js',
+  outfile: 'limo-hijacker.bundle.js',
   platform: 'browser',
   format: 'iife',
   target: ['chrome125'],
