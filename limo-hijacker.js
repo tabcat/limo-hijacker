@@ -36,7 +36,7 @@ async function resolveContent(ethlimoDomainPath) {
   const ethDomainPath = ethlimoDomainPath.hostname.slice(0, -".limo".length);
   let { protocolType, decoded } =
     ensCache.get(ethlimoDomainPath) ??
-    (await ens.getContentHashRecord({ name: ethDomainPath }));
+    (await ensClient.getContentHashRecord({ name: ethDomainPath }));
 
   if (protocolType === "ipns") {
     return new Response("no ipns support yet");
