@@ -6,6 +6,8 @@ client-side verifying ENS/IPFS resolver chrome extension
 
 This project is more of an **art project** and **learning process** for myself. I recommend using eth.limo without this extension normally.
 
+⚠️ **Only working in Firefox as it relies on [webRequest.filterResponseData](https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/API/webRequest/filterResponseData).** ⚠️
+
 ## How does it work?
 
 The extension:
