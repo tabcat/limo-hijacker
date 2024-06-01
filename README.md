@@ -2,6 +2,10 @@
 
 client-side verifying ENS/IPFS resolver chrome extension
 
+## Disclaimer
+
+I recommend using eth.limo without this extension normally. This project is more of an **art project** and **learning process** for myself.
+
 ## How does it work?
 
 1. The extension uses browser.webRequest.onHeadersReceived to edit the frame-ancestor header from *.eth.limo sites.
