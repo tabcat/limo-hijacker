@@ -11,10 +11,5 @@
   "background": {
     "scripts": ["limo-hijacker.bundle.js"],
     "persistent": true
-  },
-  "web_accessible_resources": [
-    "resolver.html",
-    "registerServiceWorker.js",
-    "limo-hijacker.js"
-  ]
+  }
 }
