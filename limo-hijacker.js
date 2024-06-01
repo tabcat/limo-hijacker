@@ -81,7 +81,6 @@ browser.webRequest.onBeforeRequest.addListener(
       "image",
       "xmlhttprequest",
       "media",
-      "websocket",
       "other",
     ],
   },
