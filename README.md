@@ -2,7 +2,7 @@
 
 client-side verifying ENS/IPFS resolver chrome extension
 
-# How does it work?
+## How does it work?
 
 1. The extension uses browser.webRequest.onHeadersReceived to edit the frame-ancestor header from *.eth.limo sites.
 2. Then whenever the user navigates to a .eth or .eth.limo domain the extension redirects to its own url (web-extension://`extension-id`/resolver.html?`domain`.eth)
@@ -10,5 +10,16 @@ client-side verifying ENS/IPFS resolver chrome extension
 4. When the iframe needs to fetch a resource from `domain`.eth.limo the service worker instead queries an ETH RPC and then an ipfs gateway with a verified fetch to resolve the content.
 
 (still a WIP!)
+
+## The problem
+
+There are a few different ways to view IPFS sites resolved through ENS:
+
+|    | client verified | storage context | low friction | pretty address |
+|----|----------|----------|---|---|
+| IPFS Gateway (e.g. dweb.link) |❌|❌|✅|❌|
+| ENS Gateway (e.g. eth.limo) |❌|✅|✅|✅|
+| eth.local (local DNS/ENS resolver) |✅|✅|❌|✅|
+| limo-hijacker |✅|✅|✅|❌| 
 
 
