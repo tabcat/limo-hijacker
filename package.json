@@ -3,9 +3,11 @@
 	"type": "module",
 	"scripts": {
 		"build": "node build.js",
-		"dev": "web-ext run --source-dir . --verbose --devtools"
+    "dev": "concurrently \"web-ext run --source-dir . --devtools\" \"chokidar ./limo-hijacker.js -c 'pnpm build'\""
 	},
 	"devDependencies": {
+		"chokidar-cli": "^3.0.0",
+		"concurrently": "^8.2.2",
 		"esbuild": "^0.21.4",
 		"web-ext": "^8.0.0"
 	},
