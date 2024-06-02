@@ -6,11 +6,13 @@
     "128": "person-in-suit-levitating.png"
   },
   "browser_action": {
+    "default_popup": "popup.html",
     "default_icon": {
       "128": "person-in-suit-levitating.png"
     }
   },
   "permissions": [
+    "storage",
     "webRequest",
     "webRequestBlocking",
     "*://*.eth.limo/*"

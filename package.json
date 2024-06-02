@@ -8,8 +8,7 @@
 		"build-extension": "web-ext build --source-dir . --ignore-files=.gitignore build.js LICENSE limo-hijacker.js package.json pnpm-lock.yaml README.md --overwrite-dest"
 	},
 	"devDependencies": {
-		"esbuild": "^0.21.4",
-		"web-ext": "^8.0.0"
+		"esbuild": "^0.21.4"
 	},
 	"dependencies": {
 		"@ensdomains/ensjs": "^3.7.0",

@@ -10,8 +10,8 @@ import { peerIdFromString } from "@libp2p/peer-id";
 
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
-let verifiedFetch, ipns;
-async function setVerifiedFetchAndIPNS() {
+let verifiedFetch, ipns, transport, ensClient;
+async function setup() {
   const helia = await createHeliaHTTP({
     blockBrokers: [trustlessGateway()],
     routers: [
@@ -25,14 +25,35 @@ async function setVerifiedFetchAndIPNS() {
   console.log("setup helia verified-fetch and ipns");
   verifiedFetch = await createVerifiedFetch(helia);
   ipns = heliaIpns(helia);
-}
-setVerifiedFetchAndIPNS();
 
-console.log('setup ens client')
-const ensClient = createEnsPublicClient({
-  chain: mainnet,
-  transport: http(),
-});
+  const ethRpc = await getEthRPC();
+  if (ethRpc) {
+    console.log(`ETH RPC set to ${ethRpc}`);
+  }
+  setENSClient(ethRpc);
+  console.log("setup ens client");
+
+  console.log("🕴️ ready to hijack requests to eth.limo 🕴️");
+}
+setup();
+
+const eth_rpc_key = "eth_rpc";
+
+async function getEthRPC() {
+  const obj = await new Promise((resolve) => {
+    browser.storage.local.get(eth_rpc_key, resolve);
+  });
+
+  return obj[eth_rpc_key];
+}
+
+function setENSClient(eth_rpc_value) {
+  transport = http(eth_rpc_value);
+  ensClient = createEnsPublicClient({
+    chain: mainnet,
+    transport,
+  });
+}
 
 const ensCache = new Map();
 const ipnsCache = new Map();
@@ -129,4 +150,9 @@ browser.webRequest.onBeforeRequest.addListener(
   },
   ["blocking"]
 );
-console.log("🕴️ ready to hijack requests to eth.limo 🕴️");
+
+browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.action === "set " + eth_rpc_key) {
+    setENSClient(message.data);
+  }
+});
