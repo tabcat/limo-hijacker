@@ -11,9 +11,9 @@ This project is more of an **art project** and **learning process** for myself. 
 ## How does it work?
 
 The extension:
-1. Forwards requests to .eth to .eth.limo
-2. Resolves the contenthash of the .eth domain using [@ensdomains/ensjs](https://github.com/ensdomains/ensjs-v3).
-3. Replaces data of responses from eth.limo with response data from trustless ipfs gateways using [@helia/verified-fetch](https://github.com/ipfs/helia-verified-fetch/tree/main).
+1. Intercepts requests to eth.limo
+2. Resolves the contenthash field of the .eth domain being visited via [@ensdomains/ensjs](https://github.com/ensdomains/ensjs-v3).
+3. Replaces data of responses from eth.limo with response data from a trustless ipfs gateway using [@helia/verified-fetch](https://github.com/ipfs/helia-verified-fetch/tree/main).
 
 ## The problem
 
