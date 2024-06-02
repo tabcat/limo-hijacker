@@ -17,12 +17,18 @@ importers:
       '@helia/http':
         specifier: ^1.0.9
         version: 1.0.9
+      '@helia/ipns':
+        specifier: ^7.2.2
+        version: 7.2.2
       '@helia/routers':
         specifier: ^1.1.0
         version: 1.1.0
       '@helia/verified-fetch':
         specifier: ^1.4.3
         version: 1.4.3
+      '@libp2p/peer-id':
+        specifier: ^4.1.2
+        version: 4.1.2
       viem:
         specifier: ^2.13.3
         version: 2.13.3(typescript@5.4.5)

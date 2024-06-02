@@ -11,8 +11,10 @@
 		"@ensdomains/ensjs": "^3.7.0",
 		"@helia/block-brokers": "^3.0.2",
 		"@helia/http": "^1.0.9",
+		"@helia/ipns": "^7.2.2",
 		"@helia/routers": "^1.1.0",
 		"@helia/verified-fetch": "^1.4.3",
+		"@libp2p/peer-id": "^4.1.2",
 		"viem": "^2.13.3"
 	}
 }

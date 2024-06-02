@@ -4,31 +4,40 @@ import { createEnsPublicClient } from "@ensdomains/ensjs";
 import { trustlessGateway } from "@helia/block-brokers";
 import { createHeliaHTTP } from "@helia/http";
 import { delegatedHTTPRouting, httpGatewayRouting } from "@helia/routers";
+import { ipns as heliaIpns } from "@helia/ipns";
 import { createVerifiedFetch } from "@helia/verified-fetch";
+import { peerIdFromString } from "@libp2p/peer-id";
 
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
+let helia, ipns;
+async function setHeliaIpns() {
+  helia = await createHeliaHTTP({
+    blockBrokers: [trustlessGateway()],
+    routers: [
+      delegatedHTTPRouting("http://delegated-ipfs.dev"),
+      httpGatewayRouting({
+        gateways: ["https://trustless-gateway.link"],
+      }),
+    ],
+  });
+  ipns = heliaIpns(helia);
+}
+setHeliaIpns();
+
 let verifiedFetch;
 async function setVerifiedFetch() {
-  verifiedFetch = await createVerifiedFetch(
-    await createHeliaHTTP({
-      blockBrokers: [trustlessGateway()],
-      routers: [
-        delegatedHTTPRouting("http://delegated-ipfs.dev"),
-        httpGatewayRouting({
-          gateways: ["https://trustless-gateway.link"],
-        }),
-      ],
-    })
-  );
+  verifiedFetch = await createVerifiedFetch(helia);
 }
-setVerifiedFetch()
+setVerifiedFetch();
 
 const ensClient = createEnsPublicClient({
   chain: mainnet,
   transport: http(),
 });
+
 const ensCache = new Map();
+const ipnsCache = new Map();
 
 async function resolveContent(ethlimoDomainPath) {
   ethlimoDomainPath = new URL(ethlimoDomainPath);
@@ -38,11 +47,25 @@ async function resolveContent(ethlimoDomainPath) {
     ensCache.get(ethlimoDomainPath) ??
     (await ensClient.getContentHashRecord({ name: ethDomainPath }));
 
-  if (protocolType === "ipns") {
-    return new Response("no ipns support yet");
+  ensCache.set(ethDomainPath, { protocolType, decoded });
+
+  if (protocolType !== "ipfs" && protocolType !== "ipns") {
+    return new Response("unsupported protocol type: " + protocolType);
   }
 
-  const fullContentPath = `ipfs://${decoded}${ethlimoDomainPath.pathname}`
+  if (protocolType === "ipns") {
+    const result =
+      ipnsCache.get(decoded) ?? (await ipns.resolve(peerIdFromString(decoded)));
+
+    console.log(result);
+    ipnsCache.set(decoded, result);
+
+    protocolType = "ipfs";
+    decoded = result.cid.toV1().toString();
+  }
+
+  const fullContentPath = `${protocolType}://${decoded}${ethlimoDomainPath.pathname}`;
+  console.log(fullContentPath);
 
   return verifiedFetch(fullContentPath);
 }
@@ -59,6 +82,7 @@ function hijack(details) {
 
   filter.onstart = (event) => {
     verifiedResponse.then(async (response) => {
+      console.log("resolve");
       filter.write(await response.arrayBuffer());
       filter.close();
     });
