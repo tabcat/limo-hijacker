@@ -12,4 +12,3 @@ esbuild.build({
     global: 'window',  // Replace global with window
   }
 }).catch(() => process.exit(1));
-
