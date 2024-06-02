@@ -22,7 +22,7 @@ async function setVerifiedFetchAndIPNS() {
     ],
   });
 
-  console.log('setup helia verified-fetch and ipns')
+  console.log("setup helia verified-fetch and ipns");
   verifiedFetch = await createVerifiedFetch(helia);
   ipns = heliaIpns(helia);
 }
@@ -41,27 +41,33 @@ async function resolveContent(ethlimoDomainPath) {
   ethlimoDomainPath = new URL(ethlimoDomainPath);
 
   const ethDomainPath = ethlimoDomainPath.hostname.slice(0, -".limo".length);
-  console.log(`resolving ${ethDomainPath}${ethlimoDomainPath.pathname} via ens client`)
+  console.log(
+    `resolving ${ethDomainPath}${ethlimoDomainPath.pathname} via ens client`
+  );
   let { protocolType, decoded } =
     ensCache.get(ethlimoDomainPath) ??
     (await ensClient.getContentHashRecord({ name: ethDomainPath }));
 
-  console.log(`resolved ${ethDomainPath} to ${protocolType}://${decoded}`)
+  console.log(`resolved ${ethDomainPath} to ${protocolType}://${decoded}`);
 
   ensCache.set(ethDomainPath, { protocolType, decoded });
 
   if (protocolType !== "ipfs" && protocolType !== "ipns") {
-    console.error('unsupported protocol type:', protocolType)
+    console.error("unsupported protocol type:", protocolType);
     return new Response("unsupported protocol type: " + protocolType);
   }
 
   if (protocolType === "ipns") {
-    console.log(`resolving ${protocolType}://${decoded}`)
+    console.log(`resolving ${protocolType}://${decoded}`);
     // return new Response("unsupported protocol type: " + protocolType);
     const result =
       ipnsCache.get(decoded) ?? (await ipns.resolve(peerIdFromString(decoded)));
 
-    console.log(`resolved ${protocolType}://${decoded} to ipfs://${result.cid.toV1().toString()}`)
+    console.log(
+      `resolved ${protocolType}://${decoded} to ipfs://${result.cid
+        .toV1()
+        .toString()}`
+    );
     ipnsCache.set(decoded, result);
 
     // only handles ipns records with ipfs values, if something else this code will break
@@ -70,17 +76,17 @@ async function resolveContent(ethlimoDomainPath) {
   }
 
   const fullContentPath = `${protocolType}://${decoded}${ethlimoDomainPath.pathname}`;
-  console.log(`resolving ${fullContentPath} via helia verified-fetch`)
+  console.log(`resolving ${fullContentPath} via helia verified-fetch`);
 
   // return [fullContentPath, await verifiedFetch(fullContentPath)]
-  return [fullContentPath, await verifiedFetch(fullContentPath)]
+  return [fullContentPath, await verifiedFetch(fullContentPath)];
 }
 
 /**
  * Resolve ens domain to content hash and replace responses from eth.limo with a trustless ipfs gateway
  */
 function hijack(details) {
-  console.log('intercepted request to:', details.url)
+  console.log("intercepted request to:", details.url);
   let filter = browser.webRequest.filterResponseData(details.requestId);
   let encoder = new TextEncoder();
 
@@ -89,12 +95,14 @@ function hijack(details) {
   filter.onstart = (event) => {
     verifiedResponse.then(async ([fullContentPath, response]) => {
       if (response.status === 200) {
-        console.log(`resolved ${fullContentPath} via helia verified-fetch`)
+        console.log(`resolved ${fullContentPath} via helia verified-fetch`);
         filter.write(await response.arrayBuffer());
         filter.close();
       } else {
-        console.error(`failed to resolve ${fullContentPath} via helia verified-fetch`)
-        filter.close()
+        console.error(
+          `failed to resolve ${fullContentPath} via helia verified-fetch`
+        );
+        filter.close();
       }
     });
   };
@@ -121,4 +129,4 @@ browser.webRequest.onBeforeRequest.addListener(
   },
   ["blocking"]
 );
-console.log('🕴️ ready to hijack requests to eth.limo 🕴️')
+console.log("🕴️ ready to hijack requests to eth.limo 🕴️");
