@@ -107,12 +107,9 @@ async function resolveContent(ethlimoDomainPath) {
 function hijack(details) {
   console.log("intercepted request to:", details.url);
   let filter = browser.webRequest.filterResponseData(details.requestId);
-  let encoder = new TextEncoder();
-
-  const verifiedResponse = resolveContent(details.url);
 
   filter.onstart = (event) => {
-    verifiedResponse.then(async ([fullContentPath, response]) => {
+    resolveContent(details.url).then(async ([fullContentPath, response]) => {
       if (response.status === 200) {
         console.log(`resolved ${fullContentPath} via helia verified-fetch`);
         filter.write(await response.arrayBuffer());
