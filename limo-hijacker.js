@@ -152,5 +152,6 @@ browser.webRequest.onBeforeRequest.addListener(
 browser.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === "set " + eth_rpc_key) {
     setENSClient(message.data);
+    console.log(`ETH RPC set to ${message.data}`)
   }
 });
