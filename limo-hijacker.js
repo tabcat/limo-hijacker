@@ -4,9 +4,10 @@ import { createEnsPublicClient } from "@ensdomains/ensjs";
 import { trustlessGateway } from "@helia/block-brokers";
 import { createHeliaHTTP } from "@helia/http";
 import { delegatedHTTPRouting, httpGatewayRouting } from "@helia/routers";
-import { ipns as heliaIpns } from "@helia/ipns";
+// import { ipns as heliaIpns } from "@helia/ipns";
 import { createVerifiedFetch } from "@helia/verified-fetch";
-import { peerIdFromString } from "@libp2p/peer-id";
+// import { peerIdFromString } from "@libp2p/peer-id";
+
 
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
@@ -21,7 +22,7 @@ async function setHeliaIpns() {
       }),
     ],
   });
-  ipns = heliaIpns(helia);
+  // ipns = heliaIpns(helia);
 }
 setHeliaIpns();
 
@@ -37,7 +38,7 @@ const ensClient = createEnsPublicClient({
 });
 
 const ensCache = new Map();
-const ipnsCache = new Map();
+// const ipnsCache = new Map();
 
 async function resolveContent(ethlimoDomainPath) {
   ethlimoDomainPath = new URL(ethlimoDomainPath);
@@ -54,14 +55,15 @@ async function resolveContent(ethlimoDomainPath) {
   }
 
   if (protocolType === "ipns") {
-    const result =
-      ipnsCache.get(decoded) ?? (await ipns.resolve(peerIdFromString(decoded)));
+    return new Response("unsupported protocol type: " + protocolType);
+    // const result =
+    //   ipnsCache.get(decoded) ?? (await ipns.resolve(peerIdFromString(decoded)));
 
-    console.log(result);
-    ipnsCache.set(decoded, result);
+    // console.log(result);
+    // ipnsCache.set(decoded, result);
 
-    protocolType = "ipfs";
-    decoded = result.cid.toV1().toString();
+    // protocolType = "ipfs";
+    // decoded = result.cid.toV1().toString();
   }
 
   const fullContentPath = `${protocolType}://${decoded}${ethlimoDomainPath.pathname}`;
