@@ -11,7 +11,7 @@ import { peerIdFromString } from "@libp2p/peer-id";
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
 let verifiedFetch, ipns;
-async function setVerifiedFetch() {
+async function setVerifiedFetchAndIPNS() {
   const helia = await createHeliaHTTP({
     blockBrokers: [trustlessGateway()],
     routers: [
@@ -25,7 +25,7 @@ async function setVerifiedFetch() {
   verifiedFetch = await createVerifiedFetch(helia);
   ipns = heliaIpns(helia);
 }
-setVerifiedFetch();
+setVerifiedFetchAndIPNS();
 
 const ensClient = createEnsPublicClient({
   chain: mainnet,
