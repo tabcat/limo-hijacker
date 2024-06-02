@@ -2,6 +2,14 @@
   "manifest_version": 2,
   "name": "limo-hijacker",
   "version": "1.0",
+  "icons": {
+    "128": "person-in-suit-levitating.png"
+  },
+  "browser_action": {
+    "default_icon": {
+      "128": "person-in-suit-levitating.png"
+    }
+  },
   "permissions": [
     "webRequest",
     "webRequestBlocking",
