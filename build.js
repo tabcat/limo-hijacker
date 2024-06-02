@@ -5,7 +5,7 @@ esbuild.build({
   bundle: true,
   outfile: 'limo-hijacker.bundle.js',
   platform: 'browser',
-  format: 'iife',
+  format: 'esm',
   target: ['chrome125'],
   minify: false,
   define: {
