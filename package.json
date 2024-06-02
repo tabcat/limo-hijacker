@@ -2,10 +2,12 @@
 	"name": "limo-hijacker",
 	"type": "module",
 	"scripts": {
-		"build": "node build.js"
+		"build": "node build.js",
+		"dev": "web-ext run --source-dir . --verbose --devtools"
 	},
 	"devDependencies": {
-		"esbuild": "^0.21.4"
+		"esbuild": "^0.21.4",
+		"web-ext": "^8.0.0"
 	},
 	"dependencies": {
 		"@ensdomains/ensjs": "^3.7.0",
