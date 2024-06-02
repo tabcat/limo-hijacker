@@ -24,7 +24,33 @@ There are a few different ways to view IPFS sites resolved through ENS:
 | IPFS Gateway (e.g. dweb.link) |❌|❌|✅|❌|
 | ENS Gateway (e.g. eth.limo) |❌|✅|✅|✅|
 | eth.local (local DNS/ENS resolver) |✅|✅|❌|✅|
-| limo-hijacker |✅|✅|✅|✅| 
+| limo-hijacker |☑️|✅|✅|✅| 
 | ens+ipfs:// protocol handler (hypothetical) |⭐|⭐|⭐|⭐| 
 
-None existing are perfect. The endgame is either extensions being able to handle ens+ipfs:// links or built in browser support.
+☑️: IPNS/IPFS resolutions are verified locally on the client, however the ENS resolutions are not.
+
+None existing are perfect.
+
+The endgame is either extensions being able to handle ens+ipfs:// links or built in browser support.
+This will allow resolving web content without needing to interact with any trusted third-parties or systems that use them.
+
+## Prerequisits
+
+[`pnpm`](https://pnpm.io/)
+
+[`web-ext`](https://www.npmjs.com/package/web-ext) (installed globally)
+
+## Build
+
+```bash
+pnpm install
+pnpm build
+```
+
+## Dev server
+
+```bash
+web-ext run --source-dir . --devtools
+```
+
+For some reason this command has issues when ran from inside of an npm script.
