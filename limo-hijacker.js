@@ -17,7 +17,7 @@ async function setup() {
     routers: [
       delegatedHTTPRouting("http://delegated-ipfs.dev"),
       httpGatewayRouting({
-        gateways: ["https://trustless-gateway.link"],
+        gateways: ["https://trustless-gateway.link", "https://dweb.link"],
       }),
     ],
   });
