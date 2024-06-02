@@ -11,24 +11,19 @@ import { createVerifiedFetch } from "@helia/verified-fetch";
 
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
-let helia, ipns;
-async function setHeliaIpns() {
-  helia = await createHeliaHTTP({
-    blockBrokers: [trustlessGateway()],
-    routers: [
-      delegatedHTTPRouting("http://delegated-ipfs.dev"),
-      httpGatewayRouting({
-        gateways: ["https://trustless-gateway.link"],
-      }),
-    ],
-  });
-  // ipns = heliaIpns(helia);
-}
-setHeliaIpns();
-
-let verifiedFetch;
+let verifiedFetch
 async function setVerifiedFetch() {
-  verifiedFetch = await createVerifiedFetch(helia);
+  verifiedFetch = await createVerifiedFetch(
+    await createHeliaHTTP({
+      blockBrokers: [trustlessGateway()],
+      routers: [
+        delegatedHTTPRouting("http://delegated-ipfs.dev"),
+        httpGatewayRouting({
+          gateways: ["https://trustless-gateway.link"],
+        }),
+      ],
+    })
+  );
 }
 setVerifiedFetch();
 
@@ -67,6 +62,7 @@ async function resolveContent(ethlimoDomainPath) {
   }
 
   const fullContentPath = `${protocolType}://${decoded}${ethlimoDomainPath.pathname}`;
+
   console.log(fullContentPath);
 
   return verifiedFetch(fullContentPath);
@@ -85,6 +81,7 @@ function hijack(details) {
   filter.onstart = (event) => {
     verifiedResponse.then(async (response) => {
       console.log("resolve");
+      console.log(response)
       filter.write(await response.arrayBuffer());
       filter.close();
     });
