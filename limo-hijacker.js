@@ -10,20 +10,20 @@ import { peerIdFromString } from "@libp2p/peer-id";
 
 const browser = typeof chrome === "undefined" ? window.browser : chrome;
 
-let verifiedFetch, ipns
+let verifiedFetch, ipns;
 async function setVerifiedFetch() {
   const helia = await createHeliaHTTP({
-      blockBrokers: [trustlessGateway()],
-      routers: [
-        delegatedHTTPRouting("http://delegated-ipfs.dev"),
-        httpGatewayRouting({
-          gateways: ["https://trustless-gateway.link"],
-        }),
-      ],
-    })
+    blockBrokers: [trustlessGateway()],
+    routers: [
+      delegatedHTTPRouting("http://delegated-ipfs.dev"),
+      httpGatewayRouting({
+        gateways: ["https://trustless-gateway.link"],
+      }),
+    ],
+  });
 
   verifiedFetch = await createVerifiedFetch(helia);
-  ipns = heliaIpns(helia)
+  ipns = heliaIpns(helia);
 }
 setVerifiedFetch();
 
