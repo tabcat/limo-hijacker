@@ -8,8 +8,6 @@ import { ipns as heliaIpns } from "@helia/ipns";
 import { createVerifiedFetch } from "@helia/verified-fetch";
 import { peerIdFromString } from "@libp2p/peer-id";
 
-const browser = typeof chrome === "undefined" ? window.browser : chrome;
-
 let verifiedFetch, ipns, transport, ensClient;
 async function setup() {
   const helia = await createHeliaHTTP({

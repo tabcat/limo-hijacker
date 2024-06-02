@@ -1,6 +1,6 @@
 # limo hijacker 🕴️
 
-client-side verifying ENS/IPFS resolver chrome extension
+client-side verifying ENS/IPFS resolver firefox extension
 
 ## Disclaimer
 
