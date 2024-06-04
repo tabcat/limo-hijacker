@@ -19,7 +19,7 @@ The extension:
 
 There are a few different ways to view IPFS sites resolved through ENS:
 
-|    | client verified | storage context (per domain) | low friction | aesthetic address |
+|    | client verified | unique origin (per domain) | low friction | aesthetic address |
 |----|----------|----------|---|---|
 | IPFS Gateway (e.g. dweb.link) |❌|❌|✅|❌|
 | ENS Gateway (e.g. eth.limo) |❌|✅|✅|✅|
