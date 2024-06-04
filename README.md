@@ -53,5 +53,5 @@ pnpm build
 web-ext run --source-dir . --devtools
 ```
 
-Sometimes when visiting a site the extension is able to load the content from ipfs but the site is unable to load the content.
+Sometimes when visiting a site the extension is able to load the content from ipfs but the site is unable to load the content from the extension (from the filtered http response).
 Haven't investigated this bug much and it could interfere with trying to visit .eth.limo sites.
