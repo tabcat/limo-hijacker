@@ -53,4 +53,5 @@ pnpm build
 web-ext run --source-dir . --devtools
 ```
 
-For some reason this command has issues when ran from inside of an npm script.
+Sometimes when visiting a site the extension is able to load the content from ipfs but the site is unable to load the content.
+Haven't investigated this bug much and it could interfere with trying to visit .eth.limo sites.
